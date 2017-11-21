@@ -1,0 +1,19 @@
+; Zone file for se.lab.emc.com
+$ORIGIN se.lab.emc.com.
+$TTL    14400 ; 4 hours TTL
+
+;; SOA Resource Record
+@     IN     SOA    norcaldns1.se.lab.emc.com.     norcallab.emc.com. (
+                    2017112000 ; serial (year)(month)(day)(## from 00)
+                    10800      ; refresh after 3 hours
+                    900       ; retry after 15 min
+                    604800     ; expire after 1 week
+                    10800    ; minimum TTL of 3 hours
+                    )
+
+; Name Servers
+                    IN     NS     norcaldns1.se.lab.emc.com.
+;                   IN     NS     dns2.se.lab.emc.com.
+
+; A Records
+norcaldns1          IN     A     10.237.33.254
