@@ -1,4 +1,4 @@
-# paclabs_dns"
+# paclabs_dns
 Lab BIND DNS server on CentOS 7
 
 Zone definition files are located in files/bind/
