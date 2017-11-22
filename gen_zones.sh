@@ -32,7 +32,7 @@ cur_rev_zone=0
       if [ $cur_fwd_zone != $fwd_zone ] ; then
         echo "Exists: $ZONE_FILE_LOC$fwd_zone.zone"
 
-        sed -i '' 's/.*serial.*/                    '$datetime'  ; serial (year)(m)(d)(h)(m)(s)/' ex.zone
+        sed -i '' 's/.*serial.*/                    '$datetime'  ; serial (year)(m)(d)(h)(m)(s)/' $ZONE_FILE_LOC$fwd_zone.zone
 
       fi
 
@@ -52,6 +52,9 @@ cur_rev_zone=0
     if [ -f "$ZONE_FILE_LOC$rev_zone.zone" ] ; then
       if [ $cur_rev_zone != $rev_zone ] ; then
         echo "Exists: $ZONE_FILE_LOC$rev_zone.zone"
+
+        sed -i '' 's/.*serial.*/                    '$datetime'  ; serial (year)(m)(d)(h)(m)(s)/' $ZONE_FILE_LOC$rev_zone.zone
+
       fi
 
       last_octet=$(echo $ip_addr | cut -d'.' -f4)
