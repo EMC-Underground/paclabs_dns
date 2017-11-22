@@ -39,7 +39,8 @@ variable "vsphere_folder" {
 }
 
 variable "dns" {
-    description = "Local DNS"
+    type = "list"
+    description = "Local DNS servers"
 }
 
 variable "domain" {

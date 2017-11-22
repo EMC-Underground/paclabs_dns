@@ -11,7 +11,7 @@ vsphere_folder="Lab"
 vsphere_template="template_centos7"
 
 #Environment Section
-dns="10.254.174.10"
+dns=["10.254.174.10","10.104.128.235"]
 domain="se.lab.emc.com"
 ipv4_address = ""
 ipv4_prefix_length = ""
