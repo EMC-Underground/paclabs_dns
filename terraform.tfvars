@@ -12,7 +12,7 @@ vsphere_template="template_centos7"
 
 #Environment Section
 dns="10.254.174.10"
-domain="se.lab.norcal.com"
+domain="se.lab.emc.com"
 ipv4_address = ""
 ipv4_prefix_length = ""
 ipv4_gateway = ""
