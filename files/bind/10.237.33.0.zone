@@ -18,13 +18,3 @@ $TTL    14400 ; 4 hours TTL
 ;                   IN     NS     dns2.se.lab.emc.com.
 
 ; PTR Records
-254                 IN     PTR     norcaldns1se.lab.emc.com.
-1                   IN     PTR     nexus3k-corenorcal.se.lab.emc.com.
-6                   IN     PTR     ces2048-r4norcal.se.lab.emc.com.
-7                   IN     PTR     ces2048-r3norcal.se.lab.emc.com.
-9                   IN     PTR     cat3k-r4norcal.se.lab.emc.com.
-7                   IN     PTR     b6520-07norcal.se.lab.emc.com.
-8                   IN     PTR     b6520-08norcal.se.lab.emc.com.
-100                 IN     PTR     xio-xmsnorcal.se.lab.emc.com.
-103                 IN     PTR     vxn2-spanorcal.se.lab.emc.com.
-104                 IN     PTR     vxn2-spbnorcal.se.lab.emc.com.
