@@ -36,10 +36,12 @@ cur_rev_zone=0
 
       fi
 
-      len=$((19-${#hostname}))  # 20 = total hostname whitespace
-      spaces=$(printf '%*s' "$len" | tr ' ' "#")  # gets proper amount of whitespace as char #
+      if !(grep -qw ^$hostname $ZONE_FILE_LOC$fwd_zone.zone) ; then
+        len=$((19-${#hostname}))  # 20 = total hostname whitespace
+        spaces=$(printf '%*s' "$len" | tr ' ' "#")  # gets proper amount of whitespace as char #
 
-      echo "$hostname$spaces IN     A     $ip_addr" | tr '#' " " >> $ZONE_FILE_LOC$fwd_zone.zone
+        echo "$hostname$spaces IN     A     $ip_addr" | tr '#' " " >> $ZONE_FILE_LOC$fwd_zone.zone
+      fi
 
     else
       if [ $cur_fwd_zone != $fwd_zone ] ; then
@@ -58,10 +60,13 @@ cur_rev_zone=0
       fi
 
       last_octet=$(echo $ip_addr | cut -d'.' -f4)
-      len=$((19-${#last_octet}))  # 20 = total hostname whitespace
-      spaces=$(printf '%*s' "$len" | tr ' ' "#")  # gets proper amount of whitespace as char #
 
-      echo "$last_octet$spaces IN     PTR     $hostname$fwd_zone." | tr '#' " " >> $ZONE_FILE_LOC$rev_zone.zone
+      if !(grep -qw ^$last_octet $ZONE_FILE_LOC$rev_zone.zone) ; then
+        len=$((19-${#last_octet}))  # 20 = total hostname whitespace
+        spaces=$(printf '%*s' "$len" | tr ' ' "#")  # gets proper amount of whitespace as char #
+
+        echo "$last_octet$spaces IN     PTR     $hostname$fwd_zone." | tr '#' " " >> $ZONE_FILE_LOC$rev_zone.zone
+      fi
 
     else
       if [ $cur_rev_zone != $rev_zone ] ; then
