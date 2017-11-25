@@ -1,6 +1,6 @@
-#Lab BIND DNS server on CentOS 7
+Lab BIND DNS server on CentOS 7
 
-This will build a BIND DNS server on CentOS 7 template using Terraform. It will create the zone files defined in gen_zones.vars and append records defined in host_lists.csv.
+Builds a BIND DNS server on CentOS 7 template using Terraform. Creates zone files defined in gen_zones.vars and appends records defined in host_lists.csv.
 
 User-defined variable files:
 - "gen_zones.vars" - Defines primary and secondary zones to create, used by ./gen_zones.sh
