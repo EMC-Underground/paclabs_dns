@@ -1,0 +1,5 @@
+zone "#PROPER_ZONE_NAME#" in {
+     type #ZONE_TYPE#;
+     file "/var/named/zones/#ZONE_NAME#.zone";
+     masters { #MASTERS#; };
+};

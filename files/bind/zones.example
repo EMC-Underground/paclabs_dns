@@ -1,0 +1,5 @@
+zone "paclabs.se.lab.emc.com" in {
+     type slave;
+     file "/var/named/zones/paclabs.se.lab.emc.com.zone";
+     masters { 10.0.0.1; };
+};

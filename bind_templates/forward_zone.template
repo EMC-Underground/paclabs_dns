@@ -1,0 +1,18 @@
+; Zone file for #FORWARD_ZONE_NAME#
+$ORIGIN #FORWARD_ZONE_NAME#.
+$TTL    14400 ; 4 hours TTL
+
+;; SOA Resource Record
+@     IN     SOA    #SOA_DNS_SERVER#.     #SOA_EMAIL_ADDRESS#. (
+                    #SERIAL#  ; serial (year)(m)(d)(h) increment after editing
+                    10800      ; refresh after 3 hours
+                    900       ; retry after 15 min
+                    604800     ; expire after 1 week
+                    10800    ; minimum TTL of 3 hours
+                    )
+
+; Name Servers
+                    IN     NS     #SOA_DNS_SERVER#.
+                    IN     NS     #SECONDARY_DNS_SERVER#.
+
+; A Records

@@ -4,17 +4,19 @@ $TTL    14400 ; 4 hours TTL
 
 ;; SOA Resource Record
 @     IN     SOA    norcaldns1.se.lab.emc.com.     norcallab.emc.com. (
-                    2017112000 ; serial (year)(month)(day)(## from 00)
+                    2017112311  ; serial (year)(m)(d)(h)(m)(s)
                     10800      ; refresh after 3 hours
                     900       ; retry after 15 min
                     604800     ; expire after 1 week
                     10800    ; minimum TTL of 3 hours
                     )
 
-
-
 ; Name Servers
                     IN     NS     norcaldns1.se.lab.emc.com.
-;                   IN     NS     dns2.se.lab.emc.com.
+                    IN     NS     paclabsdns1.se.lab.emc.com.
 
 ; PTR Records
+1                   IN     PTR     nexus3k-core-32.norcal.se.lab.emc.com.
+6                   IN     PTR     ces2048-r4-32.norcal.se.lab.emc.com.
+7                   IN     PTR     ces2048-r3-32.norcal.se.lab.emc.com.
+9                   IN     PTR     cat3k-r4-32.norcal.se.lab.emc.com.

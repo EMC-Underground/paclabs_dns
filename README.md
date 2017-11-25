@@ -1,21 +1,18 @@
-# paclabs_dns
 Lab BIND DNS server on CentOS 7
 
-Zone definition files are located in files/bind/
+This will build a BIND DNS server based on CentOS 7 template using Terraform. It will create the zone files defined in gen_zones.vars and append records defined in host_lists.csv.
 
-You can create a host_list.csv (example given) of records you want to populate
-into the zone definition files - make sure to be RFC compliant (e.g. no _'s)
+User-defined variable files:
+- "gen_zones.vars" - Defines primary and secondary zones to create, used by ./gen_zones.sh
+- "terraform.tfvars" - Terraform environment variables
+- "host_list.csv" (optional) - List of A & PTR records to append to zone files
 
-There is a script "gen_zones.sh" that will append the zone definition files
-with the entries from host_list.csv to the proper zone definition files
+Examples of the above are provided (*.example)
 
-You can do everything at once by placing host_list.csv into the make
-folder and running "make gen_zones" which will run "gen_zones.sh" and then
-proceed with creating the DNS server
+- Also edit main.tf to define your VM
 
-Or just run "make" to create the DNS server only
-
-Or:
-
-terraform init
-terraform apply
+To build you can run 'make' which will do the following:
+1. ./gen_zones.sh - Copies BIND files to ./files/bind/ and create new zone files
+2. ./gen_hosts.sh - Appends A & PTR records from host_list.csv into zone files
+3. terraform init
+4. terraform apply

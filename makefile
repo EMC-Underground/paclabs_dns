@@ -1,11 +1,4 @@
 all: build
-	echo "Use make gen_zones if you want to generate a zone file from host_list.csv"
-
-gen_zones:
-	./gen_zones.sh
-	terraform init
-	terraform validate -var-file=terraform.tfvars
-	terraform apply -var-file=terraform.tfvars
 
 init:
 	terraform init
@@ -14,6 +7,8 @@ validate: init
 	terraform validate -var-file=terraform.tfvars
 
 build: validate
+	./gen_zones.sh
+	./gen_hosts.sh
 	terraform apply -var-file=terraform.tfvars
 
 debug: validate
@@ -26,3 +21,4 @@ endif
 
 destroy:
 	echo "yes" | terraform destroy
+	rm ./files/bind/*

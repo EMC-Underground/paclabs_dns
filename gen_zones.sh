@@ -1,82 +1,120 @@
 #!/bin/bash
-# This takes the DNS record info from the host_list.csv file and inputs into the appropriate zone file
-# The zone files must exist for this to work (no checks in the script for appropriate zone files)
+# Requires gen_zones.vars
+# This will create base zone files from the template in ./bind_templates/
 
-echo 'Make sure all your hostnames are RFC compliant'
+source gen_zones.vars
+datetime="$(date '+%Y%m%d%H')"  # Used for SERIAL value in zone files
 
-INPUT=host_list.csv    # host_list.csv is the records we want to put into the zone files
-ZONE_FILE_LOC=files/bind/    # relative directory of zone files
+echo "Lab: $LAB"
+echo "Authoritative DNS server for Primary zones (SOA server): $SOA_DNS_SERVER"
+echo "SOA email address: $SOA_EMAIL_ADDRESS"
+echo "Secondary DNS server (authoritative for slave zones): $SECONDARY_DNS_SERVER"
 
-# Checks that host_list.csv exists, and if not, exists
-if [ -f $INPUT ] ; then
-  echo 'host_list.csv EXISTS, continuing...'
+if [ $REVERSE_PRIMARY_WITH_SLAVE = "true" ] ; then
+  echo "Reverse primary with slave set to TRUE"
+  echo "Swapping Primary and Slave zones for this build"
+
+  temp_swap=("${PRIMARY_FORWARD_ZONES[@]}")
+  PRIMARY_FORWARD_ZONES=("${SLAVE_FORWARD_ZONES[@]}")
+  SLAVE_FORWARD_ZONES=("${temp_swap[@]}")
+
+  temp_swap=("${PRIMARY_REVERSE_ZONES[@]}")
+  PRIMARY_REVERSE_ZONES=("${SLAVE_REVERSE_ZONES[@]}")
+  SLAVE_REVERSE_ZONES=("${temp_swap[@]}")
 else
-  echo 'host_list.csv DOES NOT EXIST, exiting...'
-  exit 99
+  echo "Reverse primary with slave: $REVERSE_PRIMARY_WITH_SLAVE"
 fi
 
-# Sets $datetime to current date and time in order to update the serial in the zone files
-datetime="$(date '+%Y%m%d%H%M%S')"
+cp bind_templates/named.conf files/bind/
+cp bind_templates/zones.conf files/bind/
+cp bind_templates/named files/bind/
 
-IFS=,
-cur_fwd_zone=0
-cur_rev_zone=0
+# There are four loops that go through the primary forward zones, primary reverse zones
+# Secondary forward zones, and secondary reverse zones defined in the .vars file
+# Within each loop it will copy either the forward or reverse zone template to a new zone file
+# and then replace each variable within the template with appropriate values
+# The Primary zones will have (type master) while the Slave zones (type slave) with  master servers
 
-{
-  read line  # exclude the header line
-  while read -r hostname ip_addr fwd_zone rev_zone comments
-  do
-    echo $i $hostname $ip_addr $fwd_zone $rev_zone $comments
+for i in "${PRIMARY_FORWARD_ZONES[@]}"
+do
+  cp bind_templates/forward_zone.template files/bind/$i.zone
+  sed -i '' 's/#FORWARD_ZONE_NAME#/'$i'/' files/bind/$i.zone
+  sed -i '' 's/#SOA_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
+  sed -i '' 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
+  sed -i '' 's/#SECONDARY_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
+  sed -i '' 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
 
-    if [ -f "$ZONE_FILE_LOC$fwd_zone.zone" ] ; then
-      if [ $cur_fwd_zone != $fwd_zone ] ; then
-        echo "Exists: $ZONE_FILE_LOC$fwd_zone.zone"
+  cp bind_templates/zones.example files/bind/
+  sed -i '' 's/#PROPER_ZONE_NAME#/'$i'/' files/bind/zones.example
+  sed -i '' 's/#ZONE_TYPE#/master/' files/bind/zones.example
+  sed -i '' 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
+  sed -i '' '/#MASTERS#/d' files/bind/zones.example
 
-        sed -i '' 's/.*serial.*/                    '$datetime'  ; serial (year)(m)(d)(h)(m)(s)/' $ZONE_FILE_LOC$fwd_zone.zone
+  cat files/bind/zones.example >> files/bind/zones.conf
+  echo "Created primary forward zone: $i"
+done
 
-      fi
+for i in "${PRIMARY_REVERSE_ZONES[@]}"
+do
+  PROPER_REVERSE_OCTETS=$(echo $i | awk -F. '{print $3 "." $2 "." $1}')
 
-      if !(grep -qw ^$hostname $ZONE_FILE_LOC$fwd_zone.zone) ; then
-        len=$((19-${#hostname}))  # 20 = total hostname whitespace
-        spaces=$(printf '%*s' "$len" | tr ' ' "#")  # gets proper amount of whitespace as char #
+  cp bind_templates/reverse_zone.template files/bind/$i.zone
 
-        echo "$hostname$spaces IN     A     $ip_addr" | tr '#' " " >> $ZONE_FILE_LOC$fwd_zone.zone
-      fi
+  sed -i '' 's/#REVERSE_ZONE_NETWORK#/'$i'/' files/bind/$i.zone
+  sed -i '' 's/#PROPER_REVERSE_OCTETS#/'$PROPER_REVERSE_OCTETS'/' files/bind/$i.zone
+  sed -i '' 's/#SOA_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
+  sed -i '' 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
+  sed -i '' 's/#SECONDARY_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
+  sed -i '' 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
 
-    else
-      if [ $cur_fwd_zone != $fwd_zone ] ; then
-        echo "Not exists: $ZONE_FILE_LOC$fwd_zone.zone"
-      fi
-    fi
+  cp bind_templates/zones.example files/bind/
+  sed -i '' 's/#PROPER_ZONE_NAME#/'$PROPER_REVERSE_OCTETS'.in-addr.arpa/' files/bind/zones.example
+  sed -i '' 's/#ZONE_TYPE#/master/' files/bind/zones.example
+  sed -i '' 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
+  sed -i '' '/#MASTERS#/d' files/bind/zones.example
 
-    cur_fwd_zone=$fwd_zone
+  cat files/bind/zones.example >> files/bind/zones.conf
+  echo "Created primary reverse zone: $i ($PROPER_REVERSE_OCTETS.in-addr.arpa)"
+done
 
-    if [ -f "$ZONE_FILE_LOC$rev_zone.zone" ] ; then
-      if [ $cur_rev_zone != $rev_zone ] ; then
-        echo "Exists: $ZONE_FILE_LOC$rev_zone.zone"
+for i in "${SLAVE_FORWARD_ZONES[@]}"
+do
+    cp bind_templates/forward_zone.template files/bind/$i.zone
+    sed -i '' 's/#FORWARD_ZONE_NAME#/'$i'/' files/bind/$i.zone
+    sed -i '' 's/#SOA_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
+    sed -i '' 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
+    sed -i '' 's/#SECONDARY_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
+    sed -i '' 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
 
-        sed -i '' 's/.*serial.*/                    '$datetime'  ; serial (year)(m)(d)(h)(m)(s)/' $ZONE_FILE_LOC$rev_zone.zone
+    cp bind_templates/zones.example files/bind/
+    sed -i '' 's/#PROPER_ZONE_NAME#/'$i'/' files/bind/zones.example
+    sed -i '' 's/#ZONE_TYPE#/slave/' files/bind/zones.example
+    sed -i '' 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
+    sed -i '' 's/#MASTERS#/'$SECONDARY_DNS_IP_ADDRESS'/' files/bind/zones.example
 
-      fi
+    cat files/bind/zones.example >> files/bind/zones.conf
+    echo "Created slave forward zone: $i"
+done
 
-      last_octet=$(echo $ip_addr | cut -d'.' -f4)
+for i in "${SLAVE_REVERSE_ZONES[@]}"
+do
+  PROPER_REVERSE_OCTETS=$(echo $i | awk -F. '{print $3 "." $2 "." $1}')
 
-      if !(grep -qw ^$last_octet $ZONE_FILE_LOC$rev_zone.zone) ; then
-        len=$((19-${#last_octet}))  # 20 = total hostname whitespace
-        spaces=$(printf '%*s' "$len" | tr ' ' "#")  # gets proper amount of whitespace as char #
+  cp bind_templates/reverse_zone.template files/bind/$i.zone
 
-        echo "$last_octet$spaces IN     PTR     $hostname$fwd_zone." | tr '#' " " >> $ZONE_FILE_LOC$rev_zone.zone
-      fi
+  sed -i '' 's/#REVERSE_ZONE_NETWORK#/'$i'/' files/bind/$i.zone
+  sed -i '' 's/#PROPER_REVERSE_OCTETS#/'$PROPER_REVERSE_OCTETS'/' files/bind/$i.zone
+  sed -i '' 's/#SOA_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
+  sed -i '' 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
+  sed -i '' 's/#SECONDARY_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
+  sed -i '' 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
 
-    else
-      if [ $cur_rev_zone != $rev_zone ] ; then
-        echo "Not exists: $ZONE_FILE_LOC$rev_zone.zone"
-      fi
-    fi
+  cp bind_templates/zones.example files/bind/
+  sed -i '' 's/#PROPER_ZONE_NAME#/'$PROPER_REVERSE_OCTETS'.in-addr.arpa/' files/bind/zones.example
+  sed -i '' 's/#ZONE_TYPE#/slave/' files/bind/zones.example
+  sed -i '' 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
+  sed -i '' 's/#MASTERS#/'$SECONDARY_DNS_IP_ADDRESS'/' files/bind/zones.example
 
-    cur_rev_zone=$rev_zone
-
-
-
-  done
-} < $INPUT  # input file for loop
+  cat files/bind/zones.example >> files/bind/zones.conf
+  echo "Created secondary reverse zone: $i ($PROPER_REVERSE_OCTETS.in-addr.arpa)"
+done

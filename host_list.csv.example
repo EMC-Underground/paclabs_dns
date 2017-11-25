@@ -1,0 +1,5 @@
+Hostname,IP Address,Forward Zone,Reverse Zone,Comments
+norcaldns1,10.0.0.1,se.lab.emc.com,10.0.0.0,
+paclabsdns1,10.0.100.1,se.lab.emc.com,10.0.100.0,
+hostAonly,10.0.0.5,norcal.se.lab.emc.com,,
+hostAandPTR,10.0.100.8,paclabs.se.lab.emc.com,10.0.100.0,
