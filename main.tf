@@ -8,22 +8,29 @@ provider "vsphere" {
 }
 
 resource "vsphere_virtual_machine" "norcaldns1" {
-  name   = "NorCalDNS1"
-  hostname = "norcaldns1"
-  domain = "se.lab.emc.com"
+name   = "${var.vsphere_vm_name}"
+hostname = "${var.vsphere_os_hostname}"
+  domain = "${var.vsphere.domain}"
   datacenter = "${var.vsphere_datacenter}"
   folder = "${var.vsphere_folder}"
   dns_servers = ["${var.dns}"]
   cluster = "${var.vsphere_cluster}"
   time_zone = "America/Los_Angeles"
-  vcpu   = 1
-  memory = 4096
+  vcpu   = "${var.vsphere_vcpu}"
+  memory = "${var.vsphere_memory}"
 
   network_interface {
     label = "${var.vsphere_port_group_1}"
-    ipv4_address = "${var.ipv4_address}"
-    ipv4_prefix_length = "${var.ipv4_prefix_length}"
-    ipv4_gateway = "${var.ipv4_gateway}"
+    ipv4_address = "${var.ipv4_address_1}"
+    ipv4_prefix_length = "${var.ipv4_prefix_length_1}"
+    ipv4_gateway = "${var.ipv4_gateway_1}"
+  }
+
+  network_interface {
+    label = "${var.vsphere_port_group_2}"
+    ipv4_address = "${var.ipv4_address_2}"
+    ipv4_prefix_length = "${var.ipv4_prefix_length_2}"
+    ipv4_gateway = "${var.ipv4_gateway_2}"
   }
 
   disk {

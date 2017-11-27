@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# > /etc/machine-id
+
 mkdir -p ~/.ssh
 cat /tmp/keys >> ~/.ssh/authorized_keys
 yum -y update
