@@ -38,7 +38,7 @@ cur_rev_zone=0
     if [ $cur_fwd_zone != $fwd_zone ] ; then
       echo "Zone file exists: $ZONE_FILE_LOC$fwd_zone.zone"
 
-      sed -i '' 's/.*serial.*/                    '$datetime'  ; serial (year)(m)(d)(h)(m)(s)/' $ZONE_FILE_LOC$fwd_zone.zone
+      sed -i 's/.*serial.*/                    '$datetime'  ; serial (year)(m)(d)(h)(m)(s)/' $ZONE_FILE_LOC$fwd_zone.zone
     fi
 
     # Checks that $hostname exists and that it is not already in the zone file
@@ -62,7 +62,7 @@ cur_rev_zone=0
         if [ $cur_rev_zone != $rev_zone ] ; then
           echo "Zone file exists: $ZONE_FILE_LOC$rev_zone.zone"
 
-          sed -i '' 's/.*serial.*/                    '$datetime'  ; serial (year)(m)(d)(h)(m)(s)/' $ZONE_FILE_LOC$rev_zone.zone
+          sed -i 's/.*serial.*/                    '$datetime'  ; serial (year)(m)(d)(h)(m)(s)/' $ZONE_FILE_LOC$rev_zone.zone
         fi
 
         last_octet=$(echo $ip_addr | cut -d'.' -f4)

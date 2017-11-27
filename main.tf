@@ -8,9 +8,9 @@ provider "vsphere" {
 }
 
 resource "vsphere_virtual_machine" "norcaldns1" {
-name   = "${var.vsphere_vm_name}"
-hostname = "${var.vsphere_os_hostname}"
-  domain = "${var.vsphere.domain}"
+  name   = "${var.vsphere_vm_name}"
+  hostname = "${var.vsphere_os_hostname}"
+  domain = "${var.domain}"
   datacenter = "${var.vsphere_datacenter}"
   folder = "${var.vsphere_folder}"
   dns_servers = ["${var.dns}"]
@@ -24,13 +24,6 @@ hostname = "${var.vsphere_os_hostname}"
     ipv4_address = "${var.ipv4_address_1}"
     ipv4_prefix_length = "${var.ipv4_prefix_length_1}"
     ipv4_gateway = "${var.ipv4_gateway_1}"
-  }
-
-  network_interface {
-    label = "${var.vsphere_port_group_2}"
-    ipv4_address = "${var.ipv4_address_2}"
-    ipv4_prefix_length = "${var.ipv4_prefix_length_2}"
-    ipv4_gateway = "${var.ipv4_gateway_2}"
   }
 
   disk {

@@ -46,10 +46,6 @@ variable "vsphere_port_group_1" {
     description = "The vsphere port group the VM will use"
 }
 
-variable "vsphere_port_group_2" {
-    description = "The vSphere port group used for data if necessary (Optional)"
-}
-
 variable "vsphere_folder" {
     description = "The vsphere folder to put VM into"
 }
@@ -72,17 +68,5 @@ variable "ipv4_prefix_length_1" {
 }
 
 variable "ipv4_gateway_1" {
-    description = "IPv4 gateway"
-}
-
-variable "ipv4_address_2" {
-    description = "Static IPv4 address"
-}
-
-variable "ipv4_prefix_length_2" {
-    description = "Prefix length of IPv4 address"
-}
-
-variable "ipv4_gateway_2" {
     description = "IPv4 gateway"
 }

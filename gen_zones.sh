@@ -38,17 +38,17 @@ cp bind_templates/named files/bind/
 for i in "${PRIMARY_FORWARD_ZONES[@]}"
 do
   cp bind_templates/forward_zone.template files/bind/$i.zone
-  sed -i '' 's/#FORWARD_ZONE_NAME#/'$i'/' files/bind/$i.zone
-  sed -i '' 's/#SOA_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
-  sed -i '' 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
-  sed -i '' 's/#SECONDARY_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
-  sed -i '' 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
+  sed -i 's/#FORWARD_ZONE_NAME#/'$i'/' files/bind/$i.zone
+  sed -i 's/#SOA_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
+  sed -i 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
+  sed -i 's/#SECONDARY_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
+  sed -i 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
 
   cp bind_templates/zones.example files/bind/
-  sed -i '' 's/#PROPER_ZONE_NAME#/'$i'/' files/bind/zones.example
-  sed -i '' 's/#ZONE_TYPE#/master/' files/bind/zones.example
-  sed -i '' 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
-  sed -i '' '/#MASTERS#/d' files/bind/zones.example
+  sed -i 's/#PROPER_ZONE_NAME#/'$i'/' files/bind/zones.example
+  sed -i 's/#ZONE_TYPE#/master/' files/bind/zones.example
+  sed -i 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
+  sed -i '/#MASTERS#/d' files/bind/zones.example
 
   cat files/bind/zones.example >> files/bind/zones.conf
   echo "Created primary forward zone: $i"
@@ -60,18 +60,18 @@ do
 
   cp bind_templates/reverse_zone.template files/bind/$i.zone
 
-  sed -i '' 's/#REVERSE_ZONE_NETWORK#/'$i'/' files/bind/$i.zone
-  sed -i '' 's/#PROPER_REVERSE_OCTETS#/'$PROPER_REVERSE_OCTETS'/' files/bind/$i.zone
-  sed -i '' 's/#SOA_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
-  sed -i '' 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
-  sed -i '' 's/#SECONDARY_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
-  sed -i '' 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
+  sed -i 's/#REVERSE_ZONE_NETWORK#/'$i'/' files/bind/$i.zone
+  sed -i 's/#PROPER_REVERSE_OCTETS#/'$PROPER_REVERSE_OCTETS'/' files/bind/$i.zone
+  sed -i 's/#SOA_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
+  sed -i 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
+  sed -i 's/#SECONDARY_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
+  sed -i 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
 
   cp bind_templates/zones.example files/bind/
-  sed -i '' 's/#PROPER_ZONE_NAME#/'$PROPER_REVERSE_OCTETS'.in-addr.arpa/' files/bind/zones.example
-  sed -i '' 's/#ZONE_TYPE#/master/' files/bind/zones.example
-  sed -i '' 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
-  sed -i '' '/#MASTERS#/d' files/bind/zones.example
+  sed -i 's/#PROPER_ZONE_NAME#/'$PROPER_REVERSE_OCTETS'.in-addr.arpa/' files/bind/zones.example
+  sed -i 's/#ZONE_TYPE#/master/' files/bind/zones.example
+  sed -i 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
+  sed -i '/#MASTERS#/d' files/bind/zones.example
 
   cat files/bind/zones.example >> files/bind/zones.conf
   echo "Created primary reverse zone: $i ($PROPER_REVERSE_OCTETS.in-addr.arpa)"
@@ -80,17 +80,17 @@ done
 for i in "${SLAVE_FORWARD_ZONES[@]}"
 do
     cp bind_templates/forward_zone.template files/bind/$i.zone
-    sed -i '' 's/#FORWARD_ZONE_NAME#/'$i'/' files/bind/$i.zone
-    sed -i '' 's/#SOA_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
-    sed -i '' 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
-    sed -i '' 's/#SECONDARY_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
-    sed -i '' 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
+    sed -i 's/#FORWARD_ZONE_NAME#/'$i'/' files/bind/$i.zone
+    sed -i 's/#SOA_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
+    sed -i 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
+    sed -i 's/#SECONDARY_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
+    sed -i 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
 
     cp bind_templates/zones.example files/bind/
-    sed -i '' 's/#PROPER_ZONE_NAME#/'$i'/' files/bind/zones.example
-    sed -i '' 's/#ZONE_TYPE#/slave/' files/bind/zones.example
-    sed -i '' 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
-    sed -i '' 's/#MASTERS#/'$SECONDARY_DNS_IP_ADDRESS'/' files/bind/zones.example
+    sed -i 's/#PROPER_ZONE_NAME#/'$i'/' files/bind/zones.example
+    sed -i 's/#ZONE_TYPE#/slave/' files/bind/zones.example
+    sed -i 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
+    sed -i 's/#MASTERS#/'$SECONDARY_DNS_IP_ADDRESS'/' files/bind/zones.example
 
     cat files/bind/zones.example >> files/bind/zones.conf
     echo "Created slave forward zone: $i"
@@ -102,18 +102,18 @@ do
 
   cp bind_templates/reverse_zone.template files/bind/$i.zone
 
-  sed -i '' 's/#REVERSE_ZONE_NETWORK#/'$i'/' files/bind/$i.zone
-  sed -i '' 's/#PROPER_REVERSE_OCTETS#/'$PROPER_REVERSE_OCTETS'/' files/bind/$i.zone
-  sed -i '' 's/#SOA_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
-  sed -i '' 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
-  sed -i '' 's/#SECONDARY_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
-  sed -i '' 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
+  sed -i 's/#REVERSE_ZONE_NETWORK#/'$i'/' files/bind/$i.zone
+  sed -i 's/#PROPER_REVERSE_OCTETS#/'$PROPER_REVERSE_OCTETS'/' files/bind/$i.zone
+  sed -i 's/#SOA_DNS_SERVER#/'$SECONDARY_DNS_SERVER'/' files/bind/$i.zone
+  sed -i 's/#SOA_EMAIL_ADDRESS#/'$SOA_EMAIL_ADDRESS'/' files/bind/$i.zone
+  sed -i 's/#SECONDARY_DNS_SERVER#/'$SOA_DNS_SERVER'/' files/bind/$i.zone
+  sed -i 's/#SERIAL#/'$datetime'/' files/bind/$i.zone
 
   cp bind_templates/zones.example files/bind/
-  sed -i '' 's/#PROPER_ZONE_NAME#/'$PROPER_REVERSE_OCTETS'.in-addr.arpa/' files/bind/zones.example
-  sed -i '' 's/#ZONE_TYPE#/slave/' files/bind/zones.example
-  sed -i '' 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
-  sed -i '' 's/#MASTERS#/'$SECONDARY_DNS_IP_ADDRESS'/' files/bind/zones.example
+  sed -i 's/#PROPER_ZONE_NAME#/'$PROPER_REVERSE_OCTETS'.in-addr.arpa/' files/bind/zones.example
+  sed -i 's/#ZONE_TYPE#/slave/' files/bind/zones.example
+  sed -i 's/#ZONE_NAME#/'$i'/' files/bind/zones.example
+  sed -i 's/#MASTERS#/'$SECONDARY_DNS_IP_ADDRESS'/' files/bind/zones.example
 
   cat files/bind/zones.example >> files/bind/zones.conf
   echo "Created secondary reverse zone: $i ($PROPER_REVERSE_OCTETS.in-addr.arpa)"
