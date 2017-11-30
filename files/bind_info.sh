@@ -3,7 +3,7 @@
 rndc status
 systemctl status named
 echo
-echo "Bind config file: /etc/named.conf"
+echo "BIND config file: /etc/named.conf"
 echo "Zone config file: /etc/zones.conf"
 echo "Zone files are in /var/named/zones/"
 echo
