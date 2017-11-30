@@ -9,6 +9,7 @@ validate: init
 build: validate
 	./gen_zones.sh
 	./gen_hosts.sh
+	cp gen_hosts.sh files/update_hosts.sh
 	terraform apply -auto-approve -var-file=terraform.tfvars
 
 debug: validate

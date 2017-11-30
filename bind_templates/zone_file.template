@@ -1,5 +1,5 @@
-; Zone file for #FORWARD_ZONE_NAME#
-$ORIGIN #FORWARD_ZONE_NAME#.
+; Zone file for #ZONE_NAME#
+$ORIGIN #ZONE_NAME#.
 $TTL    14400 ; 4 hours TTL
 
 ;; SOA Resource Record
@@ -14,5 +14,3 @@ $TTL    14400 ; 4 hours TTL
 ; Name Servers
                     IN     NS     #SOA_DNS_SERVER#.
                     IN     NS     #SECONDARY_DNS_SERVER#.
-
-; A Records

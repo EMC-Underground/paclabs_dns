@@ -2,29 +2,36 @@
 
 # $LAB - Just an identifier, not used as variable anywhere
 LAB=norcaldns1
+
 # $REVERSE_PRIMARY_WITH_SLAVE - If set to "true" will swap the primary and slave zones during build time
 REVERSE_PRIMARY_WITH_SLAVE=false
 
+# IP addresses allowed to do Dynamic DNS updates, end each IP with a ';'
+DDNS_SERVERS="10.0.0.1;10.0.0.2"
+
 # $SOA_DNS_SERVER & $SOA_DNS_IP_ADDRESS - Authoritative DNS server for primary zones
-SOA_DNS_SERVER=norcaldns1.se.lab.emc.com
+SOA_DNS_SERVER=lab.emc.com
 SOA_DNS_IP_ADDRESS=10.0.0.1
 
 # $SOA_EMAIL_ADDRESS - Admin for the zone, replace @ with a .
-SOA_EMAIL_ADDRESS=norcallab.emc.com
+SOA_EMAIL_ADDRESS=lab.emc.com
 
 # $SECONDARY_DNS_SERVER & $SECONDARY_DNS_IP_ADDRESS - Authoritative DNS server for slave zones
-SECONDARY_DNS_SERVER=paclabsdns1.se.lab.emc.com
-SECONDARY_DNS_IP_ADDRESS=10.0.0.2
+SECONDARY_DNS_SERVER=two.lab.emc.com
+SECONDARY_DNS_IP_ADDRESS=10.0.0.1
+
+# $SECONDARY_EMAIL_ADDRESS - Admin for secondary zones
+SECONDARY_EMAIL_ADDRESS=user.emc.com
 
 # $PRIMARY_FORWARD_ZONES - Array of values separated by spaces, primary forward zones to create
-PRIMARY_FORWARD_ZONES=(se.lab.emc.com norcal.se.lab.emc.com)
+PRIMARY_FORWARD_ZONES=(one.lab.emc.com two.lab.emc.com)
 
 # $PRIMARY_REVERSE_ZONES - Array of values separated by spaces, primary reverse zones to create
 # Enter the network address, only supports /24 networks
-PRIMARY_REVERSE_ZONES=(10.0.0.1 10.0.0.2)
+PRIMARY_REVERSE_ZONES=(10.0.5.0 10.5.5.0)
 
 # $SLAVE_FORWARD_ZONES - Array of values separated by spaces, secondary forward zones to create
-SLAVE_FORWARD_ZONES=(paclabs.se.lab.emc.com)
+SLAVE_FORWARD_ZONES=(slave.lab.emc.com)
 
 # $SLAVE_REVERSE_ZONES - Array of values separated by spaces, primary reverse zones to create
 # Enter the network address, only supports /24 networks

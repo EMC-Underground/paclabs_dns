@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# > /etc/machine-id
+> /etc/machine-id
 
 mkdir -p ~/.ssh
 cat /tmp/keys >> ~/.ssh/authorized_keys
@@ -16,6 +16,7 @@ cp /tmp/bind/*.zone /var/named/zones/
 
 chmod 755 /var/named/zones
 chmod 755 /etc/named.conf
+chmod -R +666 /var/named/zones
 
 firewall-cmd --permanent --add-service=dns
 firewall-cmd --reload
@@ -23,3 +24,8 @@ firewall-cmd --reload
 systemctl enable named
 systemctl start named
 systemctl status named
+
+mv /tmp/bind_info.sh /root
+mv /tmp/update_hosts.sh /root
+chmod +x /root/bind_info.sh
+chmod +x /root/update_hosts.sh
