@@ -31,6 +31,7 @@ echo
 
 # Copies Bind configuration files to folder for transfer.
 # The zones.conf will be concatenated with additional definitions.
+mkdir files/bind
 cp bind_templates/named.conf files/bind/
 cp bind_templates/named files/bind/
 cp bind_templates/zones.conf files/bind/
