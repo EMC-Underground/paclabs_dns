@@ -11,6 +11,6 @@ $TTL    14400 ; 4 hours TTL
                     10800    ; minimum TTL of 3 hours
                     )
 
-; Name Servers
+; Records
                     IN     NS     #SOA_DNS_SERVER#.
                     IN     NS     #SECONDARY_DNS_SERVER#.

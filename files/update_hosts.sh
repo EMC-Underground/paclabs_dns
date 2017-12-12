@@ -6,8 +6,10 @@
 
 echo "Make sure all your hostnames are RFC compliant"
 
+rndc freeze
+
 INPUT=host_list.csv    # host_list.csv is the records we want to put into the zone files
-ZONE_FILE_LOC=files/bind/    # relative directory of zone files
+ZONE_FILE_LOC=/var/named/zones/    # relative directory of zone files
 
 # Checks that host_list.csv exists, and if not, exists
 if [ -f $INPUT ] ; then
@@ -29,7 +31,7 @@ cur_rev_zone=0
   read line  # exclude the header line
   # Captures each comma separated value as a var
   # Gets last record by making sure it loops as long as there is a value to enter
-  while read -r hostname ip_addr fwd_zone rev_zone comments || [ -n "$hostname" ] ;
+  while read -r hostname ip_addr rec_type fwd_zone rev_zone comments || [ -n "$hostname" ] ;
   do
 
   # Checks if forward zone file for this record is present
@@ -48,13 +50,15 @@ cur_rev_zone=0
       fi
     fi
 
+    hostname_count=$(grep -wo ^$hostname $ZONE_FILE_LOC$fwd_zone.zone | wc -l)
+
     # Checks that $hostname exists and if not in zone file appends to zone file
-    if !(grep -w ^$hostname $ZONE_FILE_LOC$fwd_zone.zone) ; then
+    if [[ ( $rec_type == "A" && $hostname_count -le 0 ) || ( $rec_type == "NS" && $hostname_count -le 1 ) ]] ; then
       len=$((19-${#hostname}))  # 20 = total hostname whitespace
       spaces=$(printf '%*s' "$len" | tr ' ' "#")  # gets proper amount of whitespace as char #
 
-      echo "$hostname$spaces IN     A     $ip_addr" | tr '#' " " >> $ZONE_FILE_LOC$fwd_zone.zone
-      echo "Added host($hostname) IP ($ip_addr) FWD Zone ($fwd_zone) $comments"
+      echo "$hostname$spaces IN     $rec_type      $ip_addr" | tr '#' " " >> $ZONE_FILE_LOC$fwd_zone.zone
+      echo "Added host ($hostname) IP ($ip_addr) FWD Zone ($fwd_zone) Record Type ($rec_type) $comments"
     fi
   else
     if [ $cur_fwd_zone != $fwd_zone ] ; then
@@ -103,3 +107,6 @@ cur_rev_zone=0
 
   done
 } < $INPUT  # input file for loop
+
+rndc reload
+rndc thaw

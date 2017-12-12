@@ -24,6 +24,11 @@ if [ $REVERSE_PRIMARY_WITH_SLAVE = "true" ] ; then
   temp_swap=("${PRIMARY_REVERSE_ZONES[@]}")
   PRIMARY_REVERSE_ZONES=("${SLAVE_REVERSE_ZONES[@]}")
   SLAVE_REVERSE_ZONES=("${temp_swap[@]}")
+
+  temp_swap2="$PRIMARY_DDNS_SERVERS"
+  PRIMARY_DDNS_SERVERS="$SECONDARY_DDNS_SERVERS"
+  SECONDARY_DDNS_SERVERS="$temp_swap2"
+
 else
   echo "Reverse primary with slave: $REVERSE_PRIMARY_WITH_SLAVE"
 fi
@@ -67,7 +72,7 @@ edit_zones_conf () {
   sed -i "s/#ZONE_TYPE#/$3/" files/bind/zones_conf.template
 
   if [ $3 = "master" ] ; then
-    sed -i "s/#EXTRA_OPTIONS#/allow-update { $DDNS_SERVERS };/" files/bind/zones_conf.template
+    sed -i "s/#EXTRA_OPTIONS#/allow-update { $PRIMARY_DDNS_SERVERS };/" files/bind/zones_conf.template
     sed -i '/#MASTERS#/d' files/bind/zones_conf.template
   elif  [ $3 = "slave" ] ; then
     sed -i 's/#EXTRA_OPTIONS#/masterfile-format text;/' files/bind/zones_conf.template
@@ -84,7 +89,6 @@ for i in "${PRIMARY_FORWARD_ZONES[@]}"
 do
   cp bind_templates/zone_file.template files/bind/$i.zone
   edit_zone_files $i $i "master"
-  echo -e "\n; A Records" >> files/bind/$i.zone
 
   cp bind_templates/zones_conf.template files/bind/
   edit_zones_conf $i $i "master"
@@ -97,7 +101,6 @@ do
 
   cp bind_templates/zone_file.template files/bind/$i.zone
   edit_zone_files $i $INV_ADDRESS.in-addr.arpa "master"
-  echo -e "\n; PTR Records" >> files/bind/$i.zone
 
   cp bind_templates/zones_conf.template files/bind/
   edit_zones_conf $INV_ADDRESS.in-addr.arpa $i "master"
